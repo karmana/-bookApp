@@ -17,7 +17,7 @@
     bookCard: Handlebars.compile(document.querySelector(select.templateOf.book).innerHTML),
   }; 
 
-const renderBookList = function(){
+const renderBookList = function(){ // display book collection
     for(const book of dataSource.books){
   
       const generatedHTML = templates.bookCard(book);
