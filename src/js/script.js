@@ -28,8 +28,7 @@ class Books {
         thisBook.getElements();
         thisBook.render();
         thisBook.initActions();
-       
-        const favoriteBooks = []; 
+    
     };
 
     initData(){
@@ -61,20 +60,32 @@ class Books {
 
     initActions(){
         const thisBook = this;
+        const favoriteBooks = []; 
 
         for(let book of thisBook.bookImage){
             book.addEventListener('dblclick', function(event){
                 event.preventDefault();
-
-                const element = document.getElementById()
-
-                thisBook.bookImage.classList.add('favorite');
                 
                 const bookId = event.target.getAttribute("data-id"); //select.books.bookImageId
                 console.log('bookId:', bookId);
+                
+                if(favoriteBooks.indexOf(bookId) = -1){ //sprawdzam czy dany element jest juz w tablicy favoriteBooks
+                    
+                    thisBook.bookImage.classList.add('favorite'); // jesli indexof = -1 wtedy dodaje klase favorite do kliknietego elementu
+                    
+                    favoriteBooks.push(bookId); // dodaje element do tablicy 
+                    console.log('favoriteBooks:', favoriteBooks);
+                }
+                else{
+                    thisBook.bookImage.classList.remove('favorite'); // usuwam klase favorite
+                    const index = favoriteBooks.indexOf(bookId)
+                    
+                    favoriteBooks.splice(index, 1); // usuwam z tablicy odznaczony element
 
-                favoriteBooks.push(bookId);
-                console.log('favoriteBooks:', favoriteBooks);
+                    console.log('favoriteBooks:', favoriteBooks);
+                }
+
+                
             })
         }
         
