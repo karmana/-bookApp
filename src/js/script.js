@@ -10,7 +10,7 @@
     books: { 
       bookList: '.books-list',
       booksPanel: '.books-panel',
-      bookImage: '.book__image',
+      bookImage: '.books-list .book__image',
       bookImageId: 'data-id',
     },
   };
@@ -62,42 +62,34 @@ class Books {
         const thisBook = this;
         const favoriteBooks = []; 
 
-        for(let book of thisBook.bookImage){
-            book.addEventListener('dblclick', function(event){
-                event.preventDefault();
+        thisBook.bookContainer.addEventListener('dblclick', function(event){ //dodaje nasluchiwacz na cala liste, a nie na wszystkie okladki ksiazek z osobna, technika zwana event delegation 
+            event.preventDefault();
+
+            const eventElement = event.target.offsetParent; // wlasciwosc target, jest referencja do elementu, ktory bral udzial w zdarzeniu, czyli w przypadku dblclick elementu, ktory zostal klikniety; wlasciwosc offsetParent - jest odnosnikiem do kontenera, w ktorym jest element, w tym przypadku sam event.target zawsze bylby img, a nie href, ktorego potrzebuje - img nie ma takich klas
+
+            const bookId = eventElement.getAttribute(select.books.bookImageId); 
+            
+            console.log('bookId+eventElement:', bookId, eventElement);
+
+            //sprawdzam czy dany element jest juz w tablicy favoriteBooks
+            if(!eventElement.classList.contains('favorite')){ 
                 
-                const bookId = event.target.getAttribute("data-id"); //select.books.bookImageId
-                console.log('bookId:', bookId);
-                
-                if(favoriteBooks.indexOf(bookId) = -1){ //sprawdzam czy dany element jest juz w tablicy favoriteBooks
+                eventElement.classList.add('favorite'); 
                     
-                    thisBook.bookImage.classList.add('favorite'); // jesli indexof = -1 wtedy dodaje klase favorite do kliknietego elementu
-                    
-                    favoriteBooks.push(bookId); // dodaje element do tablicy 
-                    console.log('favoriteBooks:', favoriteBooks);
-                }
-                else{
-                    thisBook.bookImage.classList.remove('favorite'); // usuwam klase favorite
-                    const index = favoriteBooks.indexOf(bookId)
-                    
-                    favoriteBooks.splice(index, 1); // usuwam z tablicy odznaczony element
+                favoriteBooks.push(bookId); // dodaje element do tablicy 
+                console.log('favoriteBooks:', favoriteBooks);
+            }  
+            else{
+                eventElement.classList.remove('favorite'); // usuwam klase favorite
+                const index = favoriteBooks.indexOf(bookId)
+                favoriteBooks.splice(index, 1); // usuwam z tablicy odznaczony element
+                console.log('favoriteBooks:', favoriteBooks);
+            }
+            
+        });
+    }
+    
+    }
+    new Books();
 
-                    console.log('favoriteBooks:', favoriteBooks);
-                }
-
-                
-            })
-        }
-        
-
-        
-    };
-
-
-}
-
-new Books();
-
-}  
- 
-
+}   
