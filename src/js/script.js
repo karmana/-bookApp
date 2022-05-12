@@ -11,7 +11,10 @@
       bookList: '.books-list',
       booksPanel: '.books-panel',
       bookImage: '.books-list .book__image',
-      bookImageId: 'data-id',
+      bookImageId: 'data-id',  
+    },
+    form: {
+        filters: '.filters',
     },
   };
 
@@ -20,7 +23,7 @@
   }; 
 
 
-class Books {
+ class Books {
     constructor(){
         const thisBook = this;
 
@@ -41,6 +44,7 @@ class Books {
 
         thisBook.bookContainer = document.querySelector(select.books.bookList);
         thisBook.bookImage = document.querySelectorAll(select.books.bookImage);
+        thisBook.form = document.querySelector(select.form.filters);
 
         console.log('thisBook.bookImage', thisBook.bookImage);
     };
@@ -61,6 +65,7 @@ class Books {
     initActions(){
         const thisBook = this;
         const favoriteBooks = []; 
+        thisBook.filters = []; //pusta tablica do przechowywania informacji, jakie aktualnie filtry sa wybrane
 
         thisBook.bookContainer.addEventListener('dblclick', function(event){ //dodaje nasluchiwacz na cala liste, a nie na wszystkie okladki ksiazek z osobna, technika zwana event delegation 
             event.preventDefault();
@@ -71,7 +76,6 @@ class Books {
             
             console.log('bookId+eventElement:', bookId, eventElement);
 
-            //sprawdzam czy dany element jest juz w tablicy favoriteBooks
             if(!eventElement.classList.contains('favorite')){ 
                 
                 eventElement.classList.add('favorite'); 
@@ -87,9 +91,55 @@ class Books {
             }
             
         });
-    }
+
+        thisBook.form.addEventListener('click', function(event){
+
+            if(event.target.type == 'checkbox' && 
+                event.target.tagName == 'INPUT' && 
+                event.target.name == 'filter'){
+                
+                const boxValue = event.target.value;
+                const boxIsChecked = event.target.checked; // wlasciwosc checkbox - klikniety 
+
+                if(boxIsChecked){
+                    thisBook.filters.push(boxValue);
+                }
+                else{
+                    thisBook.filters.splice(thisBook.filters.indexOf(boxValue), 1);
+                }
+                
+                console.log('filters:', thisBook.filters);
+            }
+            thisBook.filterBooks();
+         });
+         
+    };
     
-    }
+    filterBooks(){
+       const thisBook = this;
+
+        for(let book of dataSource.books){ //dla wszystkich ksiazek w dataSource.books
+            
+            const dataId = document.querySelector(select.books.bookImage + '[data-id = "' + book.id + '"]');
+            
+            let shouldBeHidden = false; //zakladam, ze na starcie zadna ksiazka nie powinna posiadac klasy hidden
+                
+            for(let filter of thisBook.filters) {  //sprawdzam czy filtr pasuje do informacji o ksiazce
+                if(!book.details[filter]) { // czy !details.adult lub details.nonFiction = true
+                  shouldBeHidden = true;
+                  break;
+                }
+            }
+            
+            if(shouldBeHidden){
+                dataId.classList.add('hidden');
+            }
+            else{
+                dataId.classList.remove('hidden');
+            }
+        }
+    };
+ };
     new Books();
 
 }   
